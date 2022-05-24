@@ -63,4 +63,76 @@ Mặc dù code khá ngắn, nhưng nó đang làm rất nhiều điều. Có r�
 1. old_vote và new_vote đang được “parsed” thành 1 giá trị số.
 2. Cập nhật điểm
 
-Chúng tôi có thể làm cho code dễ đọc hơn bằng cách giải quyết từng task riêng biệt. Đoạn code sau giải quyết task đầu tiên, parsing the vote thành 1 giá trị số
+Chúng tôi có thể làm cho code dễ đọc hơn bằng cách giải quyết từng task riêng biệt. Đoạn code sau giải quyết task đầu tiên, parsing the vote thành 1 giá trị số:
+
+```jsx
+var vote_value = function (vote) {
+  if (vote === 'Up') {
+    return +1;
+  }
+  if (vote === 'Down') {
+    return -1;
+  }
+  return 0;
+};
+```
+
+Và bây giờ phần còn lại của code có thể giải quyết task thứ hai, là cập nhật điểm:
+
+```jsx
+var vote_changed = function (old_vote, new_vote) {
+  var score = get_score();
+
+  score -= vote_value(old_vote); // remove the old vote
+  score += vote_value(new_vote); // add the new vote
+
+  set_score(score);
+}
+```
+
+Như bạn có thể thấy, với phiên bản code này thì nó giúp cho chúng ta dễ hiểu hơn, giảm bớt sự suy nghĩ của chúng ta về logic của code. Đây chính là một phần quan trọng trong việc làm cho code “easy to understand.”
+
+## Extracting Values from an Object
+Chúng tôi có code JavaScript dùng để format location của user thành một chuỗi String thân thiện với format như sau “City, Country”. Ví dụ như là “Santa Monica, USA” hoặc “Paris, France.” Chúng tôi đã được cung cấp một từ điển location_info với nhiều thông tin có cấu trúc. Tất cả những gì chúng tôi phải làm là chọn “City” và “Country” từ tất cả các fields và nối chúng lại với nhau.
+
+![Image from 003_the_art_of_readable_code, page 136](https://user-images.githubusercontent.com/47113232/170071190-ef2e8e7d-e1d3-4b49-9f4f-116b4d2e864f.png)
+
+Cho đến nay, nó có vẻ dễ dàng, nhưng phần khó khăn là bất kỳ hoặc tất cả bốn giá trị này có thể bị thiếu. Đây là cách chúng tôi giải quyết vấn đề đó:
+
+- Khi chọn “City,” chúng tôi ưu tiên sử dụng “LocalityName” (city/town) nếu nó có, sau đó mới tới “SubAdministrativeAreaName” (larger city/county), và cuối cùng mới là “AdministrativeAreaName” (state/territory).
+- Nếu cả ba đều bị thiếu thì “City” sẽ được gán giá trị default là “Middle-of-Nowhere”.
+- Nếu “CountryName” bị thiếu thì nó sẽ được gán giá trị default là “Planet Earth”.
+
+Hình sau đây cho thấy hai ví dụ về việc xử lý các giá trị bị thiếu.
+
+![Image from 003_the_art_of_readable_code, page 137](https://user-images.githubusercontent.com/47113232/170071469-f5a9bc29-4426-4a44-b63a-d340a288a92c.png)
+
+Đây là code mà chúng tôi đã viết để thực hiện task này:
+
+```jsx
+var place = location_info["LocalityName"]; // e.g. "Santa Monica"
+if (!place) {
+  place = location_info["SubAdministrativeAreaName"]; // e.g. "Los Angeles"
+}
+if (!place) {
+  place = location_info["AdministrativeAreaName"]; // e.g. "California"
+}
+if (!place) {
+  place = "Middle-of-Nowhere";
+}
+if (location_info["CountryName"]) {
+  place += ", " + location_info["CountryName"]; // e.g. "USA"
+} else {
+  place += ", Planet Earth";
+}
+
+return place;
+```
+
+Đoạn code nhìn hơi lộn xộn, nhưng nó đã hoàn thành đúng công việc của mình.
+
+Nhưng vài ngày sau, chúng tôi cần cải thiện chức năng: đối với các locations ở United States, ví dụ như chúng tôi muốn hiển thị state thay thế cho country (nếu có thể). Vì vậy, thay vì "Santa Monica, USA", nó sẽ trả về "Santa Monica, California.”
+
+Thêm tính năng này vào code trước đó sẽ làm cho nó xấu hơn nhiều.
+
+## Applying “One Task at a Time”
