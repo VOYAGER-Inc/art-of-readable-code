@@ -136,3 +136,59 @@ Nhưng vài ngày sau, chúng tôi cần cải thiện chức năng: đối vớ
 Thêm tính năng này vào code trước đó sẽ làm cho nó xấu hơn nhiều.
 
 ## Applying “One Task at a Time”
+Thay vì bẻ cong code này theo ý muốn của chúng tôi, chúng tôi đã dừng lại và nhận ra rằng nó đã thực hiện nhiều tasks cùng một lúc:
+1. Trích xuất giá trị từ location_info
+2. Thực hiện một thứ tự ưu tiên cho "City", và nếu không tìm thấy “City” nào thì sẽ lấy giá trị default là “Middle-of-Nowhere”
+3. Lấy “Country”, và nếu không có “Country” thì sẽ lấy giá trị default là “Planet Earth”
+4. Cập nhật place
+
+Vì vậy, chúng tôi đã viết lại code này để giải quyết từng tasks này một cách độc lập.
+Nhiệm vụ đầu tiên (trích xuất các giá trị từ location_info)
+
+```jsx
+  var town = location_info["LocalityName"]; // e.g. "Santa Monica"
+  var city = location_info["SubAdministrativeAreaName"]; // e.g. "Los Angeles"
+  var state = location_info["AdministrativeAreaName"]; // e.g. "California"
+  var country = location_info["CountryName"]; // e.g. "USA"
+```
+
+Tại thời điểm này, chúng tôi đã sử dụng xong location_info và không phải nhớ những keys dài dòng và không trực quan đó. Thay vào đó, chúng tôi đã có bốn biến đơn giản hơn để làm việc.
+
+Tiếp theo, chúng tôi phải tìm ra "second half" của giá trị trả về sẽ là gì:
+```jsx
+// Bắt đầu với giá trị mặc định và tiếp tục ghi đè bằng giá trị cụ thể nhất.
+var second_half = "Planet Earth";
+if (country) {
+  second_half = country;
+}
+if (state && country === "USA") {
+  second_half = state;
+}
+```
+
+Tương tự, chúng tôi có thể tìm ra “first half”:
+```jsx
+var first_half = "Middle-of-Nowhere";
+if (state && country !== "USA") {
+  first_half = state;
+}
+if (city) {
+  first_half = city;
+}
+if (town) {
+  first_half = town;
+}
+```
+
+Cuối cùng, chúng tôi kết hợp thông tin với nhau:
+```jsx
+ return first_half + ", " + second_half;
+```
+
+Hình minh họa về “defragmentation” ở đầu chương đã thể hiện giải pháp này.
+
+Đây là hình minh họa tương tự, với nhiều chi tiết hơn được điền vào:
+
+![Image from 003_the_art_of_readable_code, page 139](https://user-images.githubusercontent.com/47113232/170294392-d1a35a10-4f51-4e28-9486-0d9db0a549ed.png)
+
+Như bạn có thể thấy, bốn tasks trong giải pháp thứ hai đã được phân mảnh thành các vùng riêng biệt.
