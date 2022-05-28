@@ -1,6 +1,6 @@
 # Chapter 2: Packing Information into Names - Đóng gói thông tin thành tên
 
-![IMAGE](quiver-image-url/AB12846C1C2A57BACB9DE68D07F0426B.jpg =376x218)
+<img width="346" alt="image" src="https://user-images.githubusercontent.com/95276558/170826985-79b334d7-bdc1-45b5-91ad-933746aa7bb1.png">
 
 Cho dù bạn đang đặt tên cho một biến, một hàm hay một lớp, thì rất nhiều nguyên tắc áp dụng giống nhau. Chúng tôi thích nghĩ về một cái tên như một nhận xét nhỏ. Mặc dù không có nhiều chỗ trống, bạn có thể truyền tải rất nhiều thông tin bằng cách chọn một cái tên hay.
 
@@ -50,7 +50,7 @@ Tên `Stop()` không sao cả, nhưng tùy thuộc vào chức năng chính xác
 
 ## Tìm thêm các từ "đầy màu sắc"
 
-![IMAGE](quiver-image-url/468016952CF16812A690F58F272E1AE2.jpg =346x202)
+<img width="346" alt="image" src="https://user-images.githubusercontent.com/95276558/170827046-f5f77e7d-b0f6-4431-8736-5c491e3de3cb.png">
 
 Đừng ngại sử dụng từ điển đồng nghĩa hoặc nhờ bạn bè gợi ý về tên hay hơn. Tiếng Anh là một ngôn ngữ phong phú, và có rất nhiều từ để bạn lựa chọn.
 Dưới đây là một số ví dụ về một từ, cũng như các phiên bản "đầy màu sắc" hơn có thể áp dụng cho trường hợp của bạn:
@@ -184,7 +184,7 @@ Phần lớn thời gian, họ bị lạm dụng vì sự lười biếng thuầ
 
 ## Ưu tiên tên cụ thể hơn tên trừu tượng
 
-![IMAGE](quiver-image-url/668C548FBC6D03F64DE087D38CC3F997.jpg =324x346)
+<img width="311" alt="image" src="https://user-images.githubusercontent.com/95276558/170827107-2f15b887-e121-4adb-8cb5-fe9a646bd906.png">
 
 Khi đặt tên cho một biến, hàm hoặc phần tử khác, hãy mô tả nó một cách cụ thể thay vì trừu tượng.
 Ví dụ: giả sử bạn có một phương thức nội bộ có tên `ServerCanStart()`, kiểm tra xem máy chủ có thể lắng nghe trên một cổng TCP / IP nhất định hay không. Tuy nhiên, tên `ServerCanStart()` là hơi trừu tượng. Một cái tên cụ thể hơn sẽ là `CanListenOnPort()`. Tên này mô tả trực tiếp những gì phương thức sẽ thực hiện.
@@ -232,7 +232,7 @@ Bạn có thể xem cách đặt tên `--run_locally` xuất hiện, nhưng nó 
 
 ## Đính kèm thông tin bổ sung vào tên
 
-![IMAGE](quiver-image-url/D7191DB2625C66A3290845FD4352E890.jpg =324x396)
+<img width="311" alt="image" src="https://user-images.githubusercontent.com/95276558/170827133-e5c80ce1-ea3d-4a3e-8d5e-e5a8203af0c1.png">
 
 Như chúng ta đã đề cập trước đây, tên của một biến giống như một chú thích nhỏ. Mặc dù không có nhiều chỗ, bất kỳ thông tin bổ sung nào bạn chèn vào tên sẽ được nhìn thấy mỗi khi biến được nhìn thấy.
 Vì vậy, nếu có điều gì đó rất quan trọng về một biến mà người đọc phải biết, thì bạn nên gắn thêm một “từ” vào tên. Ví dụ: giả sử bạn có một biến chứa chuỗi thập lục phân:
@@ -304,7 +304,7 @@ Những gì chúng tôi đang ủng hộ trong phần này là một hệ thốn
 
 ## Bao lâu nên có một cái tên?
 
-![IMAGE](quiver-image-url/9FE49C74FF767A6470DEB4370F7B812E.jpg =720x447)
+<img width="346" alt="image" src="https://user-images.githubusercontent.com/95276558/170827149-d3a11ccf-036e-488e-a828-60849e61ea8c.png">
 
 Khi chọn một cái tên hay, có một hạn chế ngầm là tên đó không được quá dài. Không ai thích làm việc với các số nhận dạng như thế này:
 `newNavigationControllerWrappingViewControllerForDataSourceOfClass`
