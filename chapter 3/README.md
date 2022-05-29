@@ -147,3 +147,41 @@ bool use_ssl = true;
 ## Phù hợp với kỳ vọng của người dùng
 
 Một số tên gây hiểu lầm vì người dùng đã có suy diễn trước về ý nghĩa của cái tên, cho dù bạn có ý nghĩa khác. Trong những trường hợp này, tốt nhất bạn chỉ nên “nhượng bộ” và thay đổi tên khác để nó không gây hiểu lầm.
+
+### Ví dụ 1: get*()
+Nhiều lập trình viên đã quen với quy ước rằng các phương thức bắt đầu bằng ```get``` là "bộ truy cập nhẹ" chỉ trả về một thành phần nội bộ. Đi ngược lại quy ước này có thể gây hiểu lầm cho những người dùng đó.
+
+Dưới đây là một ví dụ, về những việc không nên làm trong Java:
+```java
+public class StatisticsCollector {
+  public void addSample(double x) { ... }
+  
+  public double getMean() {
+    // Iterate through all samples and return total / num_samples
+  }
+  ...
+}
+```
+Trong trường hợp này, việc triển khai _getMean()_ là lặp lại dữ liệu trong quá khứ và tính giá trị trung bình một cách nhanh chóng. Bước này có thể rất tốn kém nếu có nhiều dữ liệu! Nhưng một lập trình viên không nghi ngờ có thể gọi _getMean()_ một cách bất cẩn, cho rằng đó là một lệnh gọi tốn ít chi phí.
+
+Thay vào đó, hàm nên được đổi tên thành một cái gì đó như computeMean(), nghe giống như một hoạt động tốn kém hơn. (Ngoài ra, nó nên được cấu trúc lại để thực sự là một hoạt động ít tốn chi phí hơn.)
+
+### Ví dụ 2: list::size()
+
+Dưới đây là một ví dụ từ Thư viện chuẩn C ++. Đoạn mã sau là nguyên nhân gây ra lỗi rất khó tìm khiến một trong các máy chủ của chúng tôi bị chậm khi thu thập thông tin:
+
+```c++
+void ShrinkList(list<Node>& list, int max_size) {
+    while (list.size() > max_size) {
+      FreeNode(list.back());
+      list.pop_back();
+    }
+}
+```
+"bug" ở đây là tác giả không biết rằng ```list.size()``` có độ phức tạp _O(n)_, nó đếm thông qua từng node của danh sách liên kết, thay vì chỉ trả về một số lượng được tính toán trước, điều này làm cho ```ShrinkList()``` trở thành một hoạt động có độ phức tạp O(n2).
+
+Về mặt kỹ thuật, Code này chạy đúng và trên thực tế đã vượt qua tất cả các _unit test_ của chúng tôi. Nhưng khi ```ShrinkList()``` được gọi trong danh sách có *một triệu phần tử*, phải mất hơn một giờ đồng hồ mới kết thúc!
+
+Có thể bạn đang nghĩ “Đó là lỗi của người gọi — lẽ ra người đó nên đọc tài liệu cẩn thận hơn”. Đúng là như vậy, nhưng trong trường hợp này, thực tế đáng ngạc nhiên ```list.size()``` không phải là một phép toán có thời gian cố định. Tất cả các containers trong C++ đều có một phương thức size() có thời gian thực thi không đổi.
+
+Nếu size() được đặt tên là ```countSize()``` hoặc ```countElements()```, thì lỗi tương tự sẽ ít xảy ra hơn. Các tác giả của Thư viện chuẩn C++ có lẽ muốn đặt tên cho phương thức là size() để khớp với tất cả các containers khác như _vector_ và _map_. Nhưng bởi vì họ đã làm như vậy, nên các lập trình viên dễ dàng nhầm lẫn đó là một hoạt động nhanh, như cách nó diễn ra đối với các container khác. Thật may, tiêu chuẩn C++ mới nhất hiện yêu cầu size() phải là O(1).
