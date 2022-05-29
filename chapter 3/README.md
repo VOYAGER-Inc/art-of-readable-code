@@ -185,3 +185,92 @@ Về mặt kỹ thuật, Code này chạy đúng và trên thực tế đã vư�
 Có thể bạn đang nghĩ “Đó là lỗi của người gọi — lẽ ra người đó nên đọc tài liệu cẩn thận hơn”. Đúng là như vậy, nhưng trong trường hợp này, thực tế đáng ngạc nhiên ```list.size()``` không phải là một phép toán có thời gian cố định. Tất cả các containers trong C++ đều có một phương thức size() có thời gian thực thi không đổi.
 
 Nếu size() được đặt tên là ```countSize()``` hoặc ```countElements()```, thì lỗi tương tự sẽ ít xảy ra hơn. Các tác giả của Thư viện chuẩn C++ có lẽ muốn đặt tên cho phương thức là size() để khớp với tất cả các containers khác như _vector_ và _map_. Nhưng bởi vì họ đã làm như vậy, nên các lập trình viên dễ dàng nhầm lẫn đó là một hoạt động nhanh, như cách nó diễn ra đối với các container khác. Thật may, tiêu chuẩn C++ mới nhất hiện yêu cầu size() phải là O(1).
+
+> ## AI LÀ THUẬT SĨ?
+> 
+> Một thời gian trước, một trong những tác giả đang cài đặt hệ điều hành OpenBSD. Trong bước định dạng đĩa, một menu phức tạp xuất hiện, yêu cầu các thông số đĩa. Một trong những tùy chọn là chuyển đến “Chế độ thuật sĩ”. Anh ấy cảm thấy nhẹ nhõm khi tìm thấy tùy chọn thân thiện với người dùng này và đã chọn nó. Nhưng anh ấy đã thất vọng, nó đã đưa trình cài đặt vào một lời nhắc cấp thấp chờ định dạng thủ công, không có cách rõ ràng để thoát ra khỏi nó. Rõ ràng là ```"wizard"``` có nghĩa là bạn là người hướng dẫn!
+
+### Ví dụ: Đánh giá nhiều ứng cử viên cho tên
+
+Khi quyết định một cái tên hay, bạn có thể có nhiều ứng cử viên mà bạn cần cân nhắc. Bạn thường tranh luận về giá trị của từng cái tên trong đầu trước khi quyết định lựa chọn cuối cùng. Ví dụ sau đây minh họa quá trình này.
+
+Các trang web có lưu lượng truy cập cao thường sử dụng _"thử nghiệm"_ để kiểm tra xem một thay đổi đối với trang web có cải thiện hoạt động kinh doanh hay không. Dưới đây là ví dụ về tệp cấu hình kiểm soát một số thử nghiệm:
+
+```ruby
+experiment_id: 100
+description: "increase font size to 14pt"
+traffic_fraction: 5%
+...
+```
+Mỗi thử nghiệm được xác định bởi khoảng 15 cặp thuộc tính / giá trị. Thật không may, khi xác định một thử nghiệm tương tự, bạn phải sao chép và dán hầu hết các dòng đó:
+
+```ruby
+experiment_id: 101
+description: "increase font size to 13pt"
+[other lines identical to experiment_id 100]
+```
+Giả sử chúng ta muốn khắc phục tình huống này bằng việc giới thiệu một cách để một thử nghiệm sử dụng lại các thuộc tính từ một thử nghiệm khác (Đây là khuôn khổ "kế thừa nguyên mẫu"). Kết quả cuối cùng là bạn sẽ nhập một cái gì đó như:
+
+```ruby
+experiment_id: 101
+the_other_experiment_id_I_want_to_reuse: 100
+[change any properties as needed]
+```
+Câu hỏi đặt ra là: ```the_other_experiment_id_I_want_to_reuse``` nên được đặt tên là gì?
+
+Dưới đây là bốn cái tên có thể xem xét:
+1. template
+2. reuse
+3. copy
+4. inherit
+
+Bất kỳ tên nào trong số này đều có ý nghĩa đối với chúng ta vì chúng ta là những người thêm tính năng mới này vào ngôn ngữ cấu hình. Nhưng chúng ta phải tưởng tượng tên sẽ được hiểu như thế nào đối với một người mới xem qua mã và không biết về tính năng này. Vì vậy, chúng ta hãy phân tích từng cái tên, nghĩ về những trường hợp mà ai đó có thể hiểu sai về nó.
+
+1. Hãy tưởng tượng sử dụng tên ```template```:
+```ruby
+experiment_id: 101
+template: 100
+...
+```
+
+```template``` có hai vấn đề. Đầu tiên, không rõ là “Tôi là một _template_” hay “Tôi đang sử dụng _template_ khác”. Thứ hai, một _template_ thường là một cái gì đó trừu tượng và phải được “điền vào” nó mới trở thành cụ thể. Ai đó có thể nghĩ rằng một thử nghiệm mẫu không phải là một thử nghiệm “thực”. Nhìn chung, _template_ quá mơ hồ trong tình huống này.
+
+2. Sẽ thế nào khi dùng ```reuse```:
+```ruby
+experiment_id: 101
+reuse: 100
+...
+```
+```reuse``` là một từ khá ổn, nhưng như đã nói, ai đó có thể nghĩ rằng nó đang đề cập “Thử nghiệm này có thể được sử dụng lại nhiều nhất 100 lần"". Thay đổi tên thành ```reuse_id``` sẽ hữu ích. Nhưng một người đọc bối rối có thể nghĩ rằng ```reuse_id: 100``` có nghĩa là "id để sử dụng lại của tôi là 100."
+
+3. Hãy xem xét ```copy```:
+```ruby
+experiment_id: 101
+copy: 100
+...
+```
+```copy``` là một từ khá tốt. Nhưng bản thân nó, ```copy: 100``` có vẻ như nó có thể nói rằng “sao chép thử nghiệm này 100 lần” hoặc “đây là bản sao thứ 100 của thứ gì đó”. Để làm rõ rằng thuật ngữ này đề cập đến một thử nghiệm khác, chúng ta có thể đổi tên thành ```copy_experiment```. Đây có lẽ là cái tên hay nhất cho đến nay.
+
+4. Nhưng bây giờ chúng ta hãy xem xét ```inherit```:
+```ruby
+experiment_id: 101
+inherit: 100
+...
+```
+Từ ```inherit``` quen thuộc với hầu hết các lập trình viên và người ta hiểu rằng các sửa đổi tiếp theo được thực hiện sau khi kế thừa. Với kế thừa lớp, bạn nhận được tất cả các phương thức và thành phần của một lớp khác, sau đó sửa đổi chúng hoặc thêm nhiều thứ hơn nữa. Ngay cả trong cuộc sống thực, khi bạn thừa kế tài sản từ một người họ hàng, bạn có thể hiểu rằng bạn có thể tự mình bán chúng hoặc tự mình sở hữu những thứ khác.
+
+Nhưng một lần nữa, hãy làm rõ rằng chúng ta đang kế thừa từ một thử nghiệm khác. Chúng ta có thể cải thiện tên thành ```inherit_from``` hoặc thậm chí ```inherit_from_experiment_id```.
+
+Nhìn chung, ```copy_experiment``` và ```inherit_from_experiment_id``` là những cái tên hay nhất vì chúng mô tả rõ ràng nhất những gì đang xảy ra và ít có khả năng bị hiểu nhầm nhất.
+
+## KẾT LUẬN CHUNG
+
+Những cái tên hay nhất là những cái không thể hiểu sai — người đọc mã của bạn sẽ hiểu nó theo cách bạn muốn diễn đạt và không có cách hiểu nào khác. Thật không may, rất nhiều từ tiếng Anh không rõ ràng khi sử dụng trong lập trình, chẳng hạn như ```filter```, ```length``` và ```limit```.
+
+Trước khi bạn quyết định một cái tên, hãy đóng vai _"người biện hộ của quỷ"_ và tưởng tượng tên của bạn có thể bị hiểu nhầm như thế nào. Những cái tên tốt nhất có khả năng chống lại sự hiểu nhầm đó.
+
+Khi nói đến việc xác định giới hạn trên hoặc giới hạn dưới cho một giá trị, ```max_``` và ```min_``` là những tiền tố tốt để sử dụng. Còn đối với phạm vi _exclusive_, ```first``` và ```last``` sẽ rất tốt. Đối với các phạm vi _inclusive_/_exclusive_, ```begin``` và ```end``` là tốt nhất vì chúng là những từ thành ngữ nhất.
+
+Khi đặt tên boolean, hãy sử dụng các từ như ```is``` và ```has``` làm rõ rằng đó là boolean. Tránh các từ ngữ phủ định (ví dụ: ```disable_ssl```).
+
+Cẩn thận với kỳ vọng của người dùng về một số từ nhất định. Ví dụ: người dùng có thể mong đợi ```get()``` hoặc ```size()``` là các phương thức nhẹ.
