@@ -57,7 +57,7 @@ Nhưng câu chuyện vẫn chưa dừng lại, cái tên ```max_length``` vẫn 
 
 Như bạn đã thấy trong chương trước, đây là trường hợp các đơn vị nên được gắn vào tên. Đối với trường hợp này, ý nghĩa sẽ là "số lượng ký tự", vì vậy thay vì dùng ```max_length```, chúng ta có thể thay thế bằng ```max_chars```.
 
-## Ưu tiên tối thiểu và tối đa cho các giới hạn
+## Ưu tiên **min** và **max** cho các giới hạn _Inclusive_
 
 Giả sử ứng dụng giỏ hàng của bạn cần ngăn mọi người mua nhiều hơn 10 mặt hàng cùng một lúc:
 
@@ -83,4 +83,67 @@ MAX_ITEMS_IN_CART = 10
 if shopping_cart.num_items() > MAX_ITEMS_IN_CART:
    Error("Too many items in cart.")
 ```
+## Ưu tiên first và last cho Phạm vi _Inclusive_
+<img width="247" src="https://user-images.githubusercontent.com/52561098/170853636-14755597-eb1d-46ac-94e5-cea83eb73eb4.png">
 
+Đây là một ví dụ khác mà bạn không thể biết đó là “lớn hơn” hay "lớn hơn hoặc bằng":
+```python
+print integer_range(start=2, stop=4)
+# Does this print [2,3] or [2,3,4] (or something else)?
+```
+Mặc dù ```start``` là một tên tham số hợp lý, nhưng ```stop``` có thể được hiểu theo nhiều cách ở đây.
+
+Đối với các phạm vi _bao gồm_ như thế này (trong đó phạm vi phải bao gồm cả hai điểm đầu-cuối), một lựa chọn tốt là ```first```/```last```. Ví dụ:
+```python
+set.PrintKeys(first="Bart", last="Maggie")
+```
+Không giống với ```stop```, từ ```last``` có ý nghĩa _bao hàm_ rõ ràng hơn.
+
+Ngoài ```first```/```last```, tên ```min```/```max``` cũng có thể sử dụng cho các phạm vi _bao gồm_, giả sử chúng "nghe đúng" trong ngữ cảnh đó.
+
+## Ưu tiên begin và end cho phạm vi _Inclusive_ / _Exclusive_
+<img width="267" src="https://user-images.githubusercontent.com/52561098/170854128-9e14ffd1-ce31-4ade-b7f4-4d5235350434.png">
+
+Trên thực tế, việc sử dụng các phạm vi Inclusive / Exclusive thường thuận tiện hơn. Ví dụ: nếu bạn muốn in tất cả các sự kiện đã xảy ra vào ngày 16 tháng 10, sẽ dễ dàng hơn nếu viết:
+```python
+PrintEventsInRange("OCT 16 12:00am", "OCT 17 12:00am")
+```
+hơn là:
+```python
+PrintEventsInRange("OCT 16 12:00am", "OCT 16 11:59:59.9999pm")
+```
+Vậy, một cặp tên tốt cho các tham số là gì? Tốt, quy ước lập trình điển hình để đặt tên cho một phạm vi _inclusive_/_exclusive_ là ```begin```/```end```.
+
+Nhưng từ ```end``` lại có một chút mơ hồ. Ví dụ, trong câu “I’m at the end of the book”, từ ```end``` ở đây là bao gồm. Thật tiếc là trong tiếng Anh không có từ ngắn gọn cho "vượt quá giá trị cuối cùng".
+
+Bởi vì ```begin```/```end``` có tính thành ngữ (ít nhất, nó được sử dụng theo cách này trong thư viện chuẩn cho C++ và hầu hết những nơi mà một mảng cần được "cắt" theo cách này), nó là lựa chọn tốt nhất.
+
+## Đặt tên cho Boolean
+
+Khi chọn tên cho một biến boolean hoặc một hàm trả về giá trị boolean, hãy đảm bảo rằng _true_ và _false_ thực sự có nghĩa là gì. Đây là một ví dụ nguy hiểm:
+
+```c#
+bool read_password = true;
+```
+Tùy thuộc vào cách bạn đọc nó (không có ý định chơi chữ), có hai cách hiểu rất khác nhau:
+1. Chúng ta cần xem mật khẩu
+2. Mật khẩu đã được xem
+
+Trong trường hợp này, tốt nhất bạn nên tránh đặt tên là _read_ và thay vào đó là _need_password_ hoặc _user_is_authenticated_.
+
+Nói chung, việc thêm các từ như ```is```, ```has```, ```can```, hoặc ```should``` giúp cho các **boolean** trở nên rõ nghĩa hơn.
+
+Ví dụ: một hàm có tên _SpaceLeft()_ có vẻ như sẽ trả về một số. Nếu nó trả về boolean, một cái tên tốt hơn sẽ là _HasSpaceLeft()_.
+
+Cuối cùng, tốt nhất là tránh các thuật ngữ mang tính **phủ định** ở trong tên. Ví dụ, thay vì:
+```c#
+bool disable_ssl = false;
+```
+sẽ dễ đọc hơn (và cô đọng hơn) nếu dùng:
+```c#
+bool use_ssl = true;
+```
+
+## Phù hợp với kỳ vọng của người dùng
+
+Một số tên gây hiểu lầm vì người dùng đã có suy diễn trước về ý nghĩa của cái tên, cho dù bạn có ý nghĩa khác. Trong những trường hợp này, tốt nhất bạn chỉ nên “nhượng bộ” và thay đổi tên khác để nó không gây hiểu lầm.
