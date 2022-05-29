@@ -22,7 +22,7 @@ Bạn có thể đã nghe lời khuyên rằng “functions should do only one t
 
 Trong chương này, chúng tôi sẽ chỉ cho bạn một số ví dụ về cách thực hiện việc này.
 
-## Tasks Can Be Small
+## Nhiệm vụ có thể nhỏ
 
 Giả sử có 1 voting widget trên 1 cái blog, là nơi người dùng có thể vote cho 1 comment “Up” hoặc “Down”. Tổng số điểm của 1 comment được tính bằng cách cộng tất cả lượt vote lại: +1 cho mỗi “Up” vote, -1 cho mỗi “Down” vote.
 
@@ -92,7 +92,7 @@ var vote_changed = function (old_vote, new_vote) {
 
 Như bạn có thể thấy, với phiên bản code này thì nó giúp cho chúng ta dễ hiểu hơn, giảm bớt sự suy nghĩ của chúng ta về logic của code. Đây chính là một phần quan trọng trong việc làm cho code “easy to understand.”
 
-## Extracting Values from an Object
+## Trích xuất giá trị từ một đối tượng
 Chúng tôi có code JavaScript dùng để format location của user thành một chuỗi String thân thiện với format như sau “City, Country”. Ví dụ như là “Santa Monica, USA” hoặc “Paris, France.” Chúng tôi đã được cung cấp một từ điển location_info với nhiều thông tin có cấu trúc. Tất cả những gì chúng tôi phải làm là chọn “City” và “Country” từ tất cả các fields và nối chúng lại với nhau.
 
 ![Image from 003_the_art_of_readable_code, page 136](https://user-images.githubusercontent.com/47113232/170071190-ef2e8e7d-e1d3-4b49-9f4f-116b4d2e864f.png)
@@ -135,7 +135,7 @@ Nhưng vài ngày sau, chúng tôi cần cải thiện chức năng: đối vớ
 
 Thêm tính năng này vào code trước đó sẽ làm cho nó xấu hơn nhiều.
 
-## Applying “One Task at a Time”
+## Áp dụng “Một nhiệm vụ tại một thời điểm”
 Thay vì bẻ cong code này theo ý muốn của chúng tôi, chúng tôi đã dừng lại và nhận ra rằng nó đã thực hiện nhiều tasks cùng một lúc:
 1. Trích xuất giá trị từ location_info
 2. Thực hiện một thứ tự ưu tiên cho "City", và nếu không tìm thấy “City” nào thì sẽ lấy giá trị default là “Middle-of-Nowhere”
@@ -192,3 +192,160 @@ Hình minh họa về “defragmentation” ở đầu chương đã thể hiệ
 ![Image from 003_the_art_of_readable_code, page 139](https://user-images.githubusercontent.com/47113232/170294392-d1a35a10-4f51-4e28-9486-0d9db0a549ed.png)
 
 Như bạn có thể thấy, bốn tasks trong giải pháp thứ hai đã được phân mảnh thành các vùng riêng biệt.
+
+### Cách tiếp cận khác
+Khi refactor code, thường có nhiều cách để thực hiện, và trường hợp này cũng không ngoại lệ. Khi bạn đã tách ra thành một số tasks riêng biệt, code sẽ dễ nghĩ hơn và bạn có thể nghĩ ra nhiều cách tốt hơn để refactor lại nó.
+
+Ví dụ, chuỗi câu lệnh if trước đó yêu cầu bạn đọc cẩn thận để biết mọi trường hợp có hoạt động chính xác hay không. Trên thực tế, có hai tasks con đang diễn ra đồng thời trong đoạn code đó:
+
+1. Xem qua danh sách các biến và chọn biến ưu tiên nhất có sẵn.
+2. Sử dụng một danh sách khác, tùy thuộc vào quốc gia có phải là “USA” hay không.
+
+Nhìn lại, bạn có thể thấy rằng đoạn mã trước đó có logic “if USA” đan xen với phần logic còn lại. Thay vào đó, chúng tôi có thể xử lý các trường hợp USA và không phải USA riêng biệt:
+
+```jsx
+var first_half, second_half;
+
+if (country === "USA") {
+  first_half = town || city || "Middle-of-Nowhere";
+  second_half = state || "USA";
+} else {
+  first_half = town || city || state || "Middle-of-Nowhere";
+  second_half = country || "Planet Earth";
+}
+
+return first_half + ", " + second_half;
+```
+
+Trong trường hợp bạn không quen với JavaScript, a || b || c là thành ngữ và được đánh giá là giá trị “true” đầu tiên (trong trường hợp này, là một chuỗi không có giá trị xác định). code này có lợi ích là rất dễ dàng kiểm tra danh sách ưu tiên và cập nhật nó. Hầu hết các câu lệnh if đã bị loại bỏ và logic nghiệp vụ được thể hiện bằng ít dòng code hơn.
+
+### Một ví dụ lớn hơn
+Trong hệ thống thu thập dữ liệu web mà chúng tôi đã xây dựng, một hàm có tên UpdateCounts () được gọi để tăng các thống kê khác nhau sau khi mỗi trang web được tải xuống:
+
+```cpp
+void UpdateCounts(HttpDownload hd) {
+  counts["Exit State" ][hd.exit_state()]++; // e.g. "SUCCESS" or "FAILURE"
+  counts["Http Response"][hd.http_response()]++; // e.g. "404 NOT FOUND"
+  counts["Content-Type" ][hd.content_type()]++; // e.g. "text/html"
+}
+```
+
+Chà, đó là cách chúng tôi ước mã trông như thế nào!
+
+Trên thực tế, đối tượng HttpDownload không có phương thức nào được hiển thị ở đây. Thay vào đó, HttpDownload là một lớp rất lớn và phức tạp, với nhiều lớp lồng nhau và chúng tôi phải tự tìm ra các giá trị đó. Để làm cho vấn đề tồi tệ hơn, đôi khi những giá trị đó bị thiếu hoàn toàn — trong trường hợp đó, chúng tôi chỉ sử dụng "unknown" làm giá trị mặc định.
+
+Vì tất cả những điều này, mã thực sự khá lộn xộn:
+```cpp
+// WARNING: DO NOT STARE DIRECTLY AT THIS CODE FOR EXTENDED PERIODS OF TIME.
+void UpdateCounts(HttpDownload hd) {
+  // Figure out the Exit State, if available.
+  if (!hd.has_event_log() || !hd.event_log().has_exit_state()) {
+    counts["Exit State"]["unknown"]++;
+  } else {
+    string state_str = ExitStateTypeName(hd.event_log().exit_state());
+    counts["Exit State"][state_str]++;
+  }
+
+  // If there are no HTTP headers at all, use "unknown" for the remaining elements.
+  if (!hd.has_http_headers()) {
+    counts["Http Response"]["unknown"]++;
+    counts["Content-Type"]["unknown"]++;
+    return;
+  }
+
+  HttpHeaders headers = hd.http_headers();
+
+  // Log the HTTP response, if known, otherwise log "unknown"
+  if (!headers.has_response_code()) {
+    counts["Http Response"]["unknown"]++;
+  } else {
+    string code = StringPrintf("%d", headers.response_code());
+    counts["Http Response"][code]++;
+  }
+
+  // Log the Content-Type if known, otherwise log "unknown"
+  if (!headers.has_content_type()) {
+    counts["Content-Type"]["unknown"]++;
+  } else {
+    string content_type = ContentTypeMime(headers.content_type());
+    counts["Content-Type"][content_type]++;
+  }
+}
+```
+
+Như bạn có thể thấy, có rất nhiều code, rất nhiều logic và thậm chí là một vài dòng code lặp đi lặp lại. Code này không thú vị để đọc.
+
+Đặc biệt, code này chuyển đổi qua lại giữa các tasks khác nhau. Dưới đây là các tasks khác nhau được xen kẽ trong toàn bộ code:
+
+1. Sử dụng "unknown" làm giá trị mặc định cho mỗi khóa
+2. Phát hiện xem có thiếu thành viên của HttpDownload hay không
+3. Trích xuất giá trị và chuyển đổi nó thành string
+4. Cập nhật counts[]
+
+Chúng tôi có thể cải thiện code bằng cách tách một số tasks này thành các vùng riêng biệt trong code:
+```cpp
+void UpdateCounts(HttpDownload hd) {
+  // Task: define default values for each of the values we want to extract
+  string exit_state = "unknown";
+  string http_response = "unknown";
+  string content_type = "unknown";
+
+  // Task: try to extract each value from HttpDownload, one by one
+  if (hd.has_event_log() && hd.event_log().has_exit_state()) {
+    exit_state = ExitStateTypeName(hd.event_log().exit_state());
+  }
+  if (hd.has_http_headers() && hd.http_headers().has_response_code()) {
+    http_response = StringPrintf("%d", hd.http_headers().response_code());
+  }
+  if (hd.has_http_headers() && hd.http_headers().has_content_type()) {
+    content_type = ContentTypeMime(hd.http_headers().content_type());
+  }
+
+  // Task: update counts[]
+  counts["Exit State"][exit_state]++;
+  counts["Http Response"][http_response]++;
+  counts["Content-Type"][content_type]++;
+}
+```
+
+Như bạn có thể thấy, code có ba vùng riêng biệt với các mục đích sau:
+1. Khai báo giá trị mặc định cho ba khóa mà chúng tôi quan tâm.
+2. Trích xuất các giá trị, nếu có, cho mỗi khóa này và chuyển đổi chúng thành string.
+3. Cập nhật counts[]cho mỗi key / value.
+
+Điều tốt ở những vùng này là chúng tách biệt với nhau — trong khi bạn đang đọc một vùng, bạn không cần phải nghĩ về các vùng khác.
+
+Lưu ý rằng mặc dù chúng tôi đã liệt kê bốn tasks, nhưng chúng tôi chỉ có thể tách biệt ba trong số chúng. Điều đó hoàn toàn ổn: những tasks bạn liệt kê ban đầu chỉ là điểm khởi đầu. Ngay cả việc tách một số trong số chúng cũng có thể giúp ích rất nhiều cho mọi thứ, như nó đã làm ở đây.
+
+### Cải tiến hơn nữa
+Phiên bản code mới này là một cải tiến rõ rệt so với phiên bản quái dị ban đầu. Và lưu ý rằng chúng tôi thậm chí không phải tạo các chức năng khác để thực hiện việc dọn dẹp này. Như chúng tôi đã đề cập trước đây, ý tưởng về “một nhiệm vụ tại một thời điểm” có thể giúp bạn làm sạch code bất kể ranh giới chức năng.
+
+Tuy nhiên, chúng tôi cũng có thể cải thiện code này theo cách khác, bằng cách giới thiệu ba helper functions:
+```cpp
+void UpdateCounts(HttpDownload hd) {
+  counts["Exit State"][ExitState(hd)]++;
+  counts["Http Response"][HttpResponse(hd)]++;
+  counts["Content-Type"][ContentType(hd)]++;
+}
+```
+
+Các hàm này sẽ trích xuất giá trị tương ứng hoặc trả về “unknown”. Ví dụ:
+
+```cpp
+string ExitState(HttpDownload hd) {
+  if (hd.has_event_log() && hd.event_log().has_exit_state()) {
+    return ExitStateTypeName(hd.event_log().exit_state());
+  } else {
+    return "unknown";
+  }
+}
+```
+
+Lưu ý rằng giải pháp thay thế này thậm chí không xác định bất kỳ biến nào! Như chúng ta đã đề cập trong Chương 9, Biến và Khả năng đọc, các biến giữ kết quả trung gian thường có thể bị loại bỏ hoàn toàn.
+
+Trong giải pháp này, chúng tôi chỉ đơn giản là "cắt" vấn đề theo một hướng khác. Cả hai giải pháp đều rất dễ đọc, vì chúng yêu cầu người đọc chỉ nghĩ về một nhiệm vụ tại một thời điểm.
+
+### Tóm lại
+Chương này minh họa một kỹ thuật đơn giản để tổ chức code của bạn: chỉ thực hiện một nhiệm vụ tại một thời điểm.
+
+Nếu bạn có code khó đọc, hãy cố gắng liệt kê tất cả các công việc mà code đang thực hiện. Một số tác vụ này có thể dễ dàng trở thành các hàm (hoặc lớp) riêng biệt. Các phần còn lại có thể chỉ trở thành “đoạn văn” hợp lý trong một hàm duy nhất. Chi tiết chính xác về cách bạn phân tách các nhiệm vụ này không quan trọng bằng việc chúng được tách biệt. Phần khó là mô tả chính xác tất cả những điều nhỏ nhặt mà chương trình của bạn đang làm.
