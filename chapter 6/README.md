@@ -38,7 +38,8 @@ Một số trường hợp đặt biệt có thể sử dụng đến 3 dòng co
 
 Như câu chuyện cổ điển “Who’s on First?” là một minh họa, đại từ có thể khiến mọi thứ trở nên rất khó hiểu.
 
-Người đọc phải mất thêm thời gian để “nhận ra” một đại từ. Và trong một số trường hợp, không rõ “it” hoặc “this” đang đề cập đến điều gì. Đây là một ví dụ:
+Người đọc phải mất thêm thời gian để “
+ra” một đại từ. Và trong một số trường hợp, không rõ “it” hoặc “this” đang đề cập đến điều gì. Đây là một ví dụ:
 
 ```jsx
 // Insert the data into the cache, but check if it's too big first.
@@ -74,7 +75,7 @@ Câu trên có vẻ ổn, nhưng hãy so sánh nó với câu bên dưới:
 // Give higher priority to URLs we've never crawled before.
 ```
 
-Thực sự nó đã đơn giản hơn, ngắn gọn và đúng trọng tâm hơn. Nó cũng giải thích rằng mức độ ưu tiên cao hơn được dành cho các URL chưa được thu thập thông tin — nhận xét trước đó không chứa thông tin đó.
+Thực sự nó đã đơn giản hơn, ngắn gọn và đúng trọng tâm hơn. Nó cũng giải thích rằng mức độ ưu tiên cao hơn được dành cho các URL chưa được thu thập thông tin — comment trước đó không chứa thông tin đó.
 
 ## Describe Function Behavior Precisely (Mô tả đầy đủ hành vi của chức năng)
 
@@ -178,9 +179,9 @@ for (list<Product>::reverse_iterator it = products.rbegin(); ... )
 
 Comment này giải thích những gì chương trình đang thực hiện ở cấp độ cao hơn.
 
-Có một lỗi trong chương trình này! Chức năng **CompareProductByPrice** đã sắp xếp các mặt hàng có giá cao hơn trước. Đoạn mã đang làm ngược lại với những gì tác giả dự định.
+Có một lỗi trong chương trình này! Chức năng **CompareProductByPrice** đã sắp xếp các product có giá cao hơn trước. Đoạn mã đang làm ngược lại với những gì tác giả dự định.
 
-Đây là lý do tại sao nhận xét thứ hai là tốt hơn. Mặc dù có lỗi, nhận xét đầu tiên là đúng về mặt kỹ thuật (vòng lặp lặp lại theo thứ tự ngược lại). Nhưng với comment thứ hai, người đọc sẽ dễ hiểu mục đích của người code (trước tiên là hiển thị các mặt hàng có giá cao hơn) mâu thuẫn với những gì code thực sự làm. Trên thực tế, comment hoạt động như một cách kiểm tra sự dư thừa.
+Đây là lý do tại sao comment thứ hai là tốt hơn. Mặc dù có lỗi, comment đầu tiên là đúng về mặt kỹ thuật (vòng lặp lặp lại theo thứ tự ngược lại). Nhưng với comment thứ hai, người đọc sẽ dễ hiểu mục đích của người code (trước tiên là hiển thị các product có giá cao hơn) mâu thuẫn với những gì code thực sự làm. Trên thực tế, comment hoạt động như một cách kiểm tra sự dư thừa.
 
 Cuối cùng, cách kiểm tra dự phòng tốt nhất là kiểm tra unit test (see Chapter 14, Testing and Readability). 
 
@@ -203,7 +204,7 @@ def Connect(timeout, use_encryption): ...
 Connect(timeout = 10, use_encryption = False)
 ```
 
-Trong các ngôn ngữ như C ++ và Java, bạn không thể làm điều này. Tuy nhiên, bạn có thể sử dụng nhận comment để có chức năng tương tự:
+Trong các ngôn ngữ như C ++ và Java, bạn không thể làm điều này. Tuy nhiên, bạn có thể sử dụng comment để có chức năng tương tự:
 
 ```jsx
 void Connect(int timeout, bool use_encryption) { ... } 
