@@ -4,37 +4,37 @@
 
 Trong chương này, bạn sẽ thấy cách sử dụng các biến cẩu thả làm cho một chương trình khó hiểu hơn như thế nào.
 Cụ thể, có ba vấn đề cần giải quyết:
-1. Càng có nhiều biến, càng khó theo dõi chúng.
+1. Càng có nhiều biến, càng khó theo dõi.
 2. Phạm vi của biến càng lớn, theo dõi càng lâu.
-3. Một biến càng thay đổi thường xuyên thì càng khó theo dõi giá trị hiện tại của nó.
+3. Một biến càng thay đổi thường xuyên thì càng khó theo dõi giá trị hiện tại.
 Ba phần tiếp theo sẽ thảo luận về cách giải quyết những vấn đề này.
 
 ## Loại bỏ các biến
 Trong Chương 8, Phá vỡ các biểu thức khổng lồ, chúng tôi đã chỉ ra cách giới thiệu các biến "giải thích" hoặc "tóm tắt" có thể làm cho mã dễ đọc hơn.
 Các biến này rất hữu ích vì chúng đã chia nhỏ các biểu thức khổng lồ và hoạt động như một dạng tài liệu.
 Trong phần này, chúng tôi quan tâm đến việc loại bỏ các biến không cải thiện khả năng đọc.
-Khi một biến như thế này bị xóa, mã mới ngắn gọn hơn và dễ hiểu hơn.
+Khi một biến như thế bị xóa, mã mới sẽ ngắn gọn và dễ hiểu hơn.
 Trong phần sau là một vài ví dụ về cách các biến không cần thiết này hiển thị.
 ## Biến tạm thời vô dụng
-Trong đoạn mã Python sau, hãy xem xét biến now:
+Trong đoạn mã Python sau, hãy xem xét biến `now`:
 ```python
-now = datetime.datetime.now()
-root_message.last_view_time = now
+  now = datetime.datetime.now()
+  root_message.last_view_time = now
 ```
 `now` có phải là một biến đáng để giữ lại không? Không, và đây là những lý do:
 - Nó không phá vỡ một biểu thức phức tạp.
-- Nó không làm rõ thêm — biểu thức datetime.datetime.now() đủ rõ ràng.
+- Nó không làm rõ thêm — biểu thức ```datetime.datetime.now()``` đã đủ rõ ràng.
 - Nó chỉ được sử dụng một lần, vì vậy nó không nén bất kỳ mã thừa nào.
-Không có `now`, mã dễ hiểu như sau:
+Không có `now`, mã trở nên dễ hiểu như sau:
 ```python
-root_message.last_view_time = datetime.datetime.now()
+  root_message.last_view_time = datetime.datetime.now()
 ```
-Các biến như `now` thường là "phần thừa" vẫn còn sau khi mã đã được chỉnh sửa. Biến `now` có thể đã được sử dụng ở nhiều nơi ban đầu. Hoặc có thể lập trình viên dự đoán sử dụng `now` nhiều lần, nhưng thực sự không bao giờ cần đến nó.
+Các biến như `now` thường là "phần thừa" thứ mà vẫn còn lại sau khi mã đã được chỉnh sửa. Biến `now` có thể đã được sử dụng ở nhiều nơi ngay từ ban đầu. Hoặc cũng có thể lập trình viên dự đoán sẽ sử dụng `now` nhiều lần, nhưng thực sự không bao giờ cần đến nó.
 ## Loại bỏ kết quả trung gian
 
 ![Image from 003_the_art_of_readable_code, page 95](https://user-images.githubusercontent.com/38417570/171200364-72ee67d6-6894-4b4b-a3a6-354f0b73c4c0.jpg)
 
-Dưới đây là một ví dụ về hàm JavaScript xóa một giá trị khỏi một mảng:
+Dưới đây là một ví dụ về hàm JavaScript xóa một giá trị khỏi mảng:
 ```javascript
 var remove_one = function (array, value_to_remove) {
   var index_to_remove = null;
@@ -49,7 +49,7 @@ var remove_one = function (array, value_to_remove) {
   }
 };
 ```
-Biến index_to_remove chỉ được sử dụng để giữ một kết quả trung gian. Các biến như thế này đôi khi có thể bị loại bỏ bằng cách xử lý kết quả ngay khi bạn nhận được:
+Biến `index_to_remove` chỉ được sử dụng để giữ kết quả trung gian. Các biến như thế này đôi khi có thể được loại bỏ bằng cách xử lý kết quả ngay khi bạn nhận được:
 ```javascript
   var remove_one = function (array, value_to_remove) {
     for (var i = 0; i < array.length; i += 1) {
@@ -60,12 +60,12 @@ Biến index_to_remove chỉ được sử dụng để giữ một kết quả 
     }
   };
 ```
-Bằng cách cho phép mã quay lại sớm, chúng tôi đã loại bỏ hoàn toàn index_to_remove và đơn giản hóa mã một chút.
+Bằng cách cho phép mã trả lại sớm, chúng tôi đã loại bỏ hoàn toàn `index_to_remove` và đơn giản hóa mã một chút.
 Nói chung, đó là một chiến lược tốt để hoàn thành nhiệm vụ càng nhanh càng tốt
 
 ## Loại bỏ các biến luồng kiểm soát
 
-Đôi khi bạn sẽ thấy mẫu mã này trong các vòng lặp:
+Đôi khi bạn sẽ thấy dạng mã này trong các vòng lặp:
 ```python
   boolean done = false;
   while (/* condition */ && !done) {
@@ -76,9 +76,9 @@ Nói chung, đó là một chiến lược tốt để hoàn thành nhiệm vụ
     }
   }
 ```
-Biến được thực hiện thậm chí có thể được đặt thành true ở nhiều nơi trong suốt vòng lặp.
-Mã như thế này thường cố gắng đáp ứng một số quy tắc bất thành văn mà bạn không nên thoát ra giữa vòng lặp. Không có quy tắc như vậy!
-Các biến như được thực hiện là những gì chúng tôi gọi là "các biến luồng điều khiển". Mục đích duy nhất của chúng là chỉ đạo việc thực thi chương trình — chúng không chứa bất kỳ dữ liệu chương trình thực nào. Theo kinh nghiệm của chúng tôi, các biến luồng điều khiển thường có thể được loại bỏ bằng cách sử dụng tốt hơn lập trình có cấu trúc:
+Biến được thực hiện thậm chí có thể được đặt thành `đúng` ở nhiều nơi trong suốt vòng lặp.
+Mã như thế này thường cố gắng đáp ứng một số quy tắc bất thành văn là bạn không nên thoát ra giữa vòng lặp. Không có quy tắc như vậy!
+Các biến được thực hiện như vậy chúng tôi gọi là "các biến luồng điều khiển". Mục đích duy nhất của chúng là chỉ đạo việc thực thi chương trình — chúng không chứa bất kỳ dữ liệu chương trình thực nào. Theo kinh nghiệm của chúng tôi, các biến luồng điều khiển thường có thể được loại bỏ bằng cách tốt hơn là sử dụng lập trình có cấu trúc:
 ```python
   while (/* condition */) {
     …
@@ -87,7 +87,7 @@ Các biến như được thực hiện là những gì chúng tôi gọi là "c
     }
   }
 ```
-Trường hợp này khá dễ sửa, nhưng điều gì sẽ xảy ra nếu có nhiều vòng lặp lồng nhau mà một ngắt đơn giản sẽ không đủ? Trong những trường hợp phức tạp hơn như vậy, giải pháp thường liên quan đến việc di chuyển mã vào một hàm mới (hoặc mã bên trong vòng lặp hoặc toàn bộ vòng lặp).
+Trường hợp này khá dễ sửa, nhưng điều gì sẽ xảy ra nếu có nhiều vòng lặp lồng nhau mà một điểm dừng đơn giản sẽ không đủ? Trong những trường hợp phức tạp hơn như vậy, giải pháp thường liên quan đến việc di chuyển mã vào một hàm mới (hoặc mã bên trong vòng lặp hoặc toàn bộ vòng lặp).
 * * *
 <p align="center">BẠN CÓ MUỐN ĐỒNG NGHIỆP CỦA BẠN CẢM THẤY NHƯ THỂ MỌI LÚC HỌ ĐANG Ở TRONG MỘT CUỘC PHỎNG VẤN?</p>
 
@@ -97,15 +97,16 @@ Nhưng bạn có muốn đồng nghiệp của mình cảm thấy như họ đan
 * * *
 * Eric Brechner’s I. M. Wright’s “Hard Code” (Microsoft Press, 2007), p. 166.
 
-## Thu hẹp phạm vi biến
-Tất cả chúng ta đều đã nghe lời khuyên để “tránh các biến toàn cục”. Đây là lời khuyên hữu ích, vì thật khó để theo dõi tất cả các biến toàn cục đó đang được sử dụng ở đâu và như thế nào. Và bằng cách "làm ô nhiễm không gian tên" (đặt một loạt các tên có thể xung đột với các biến cục bộ của bạn), mã có thể vô tình sửa đổi một biến toàn cục khi nó có ý định sử dụng một biến cục bộ hoặc ngược lại.
-Trên thực tế, bạn nên "thu nhỏ phạm vi" của tất cả các biến của bạn, không chỉ các biến toàn cục.
+## Thu hẹp phạm vi các biến
+
+Tất cả chúng ta đều đã nghe lời khuyên “tránh các biến toàn cục”. Đây là lời khuyên hữu ích, vì thật khó để theo dõi tất cả các biến toàn cục đó đang được sử dụng ở đâu và như thế nào. Và bằng cách "làm ô nhiễm không gian tên" (đặt một loạt các tên có thể xung đột với các biến cục bộ của bạn), mã có thể vô tình sửa đổi một biến toàn cục khi nó có ý định sử dụng một biến cục bộ hoặc ngược lại.
+Trên thực tế, bạn nên "thu hẹp phạm vi" của tất cả các biến không chỉ đối với các biến toàn cục.
 > **Ý TƯỞNG CHÍNH**
 > 
 > **Làm cho biến của bạn hiển thị bằng càng ít dòng mã càng tốt.**
 >
-Nhiều ngôn ngữ lập trình cung cấp nhiều phạm vi / cấp độ truy cập, bao gồm phạm vi mô-đun, lớp, chức năng và khối. Sử dụng quyền truy cập hạn chế hơn thường tốt hơn vì nó có nghĩa là biến có thể được “nhìn thấy” bởi ít dòng mã hơn.
-Tại sao làm điều này? Bởi vì nó làm giảm một cách hiệu quả số lượng các biến mà người đọc phải nghĩ đến cùng một lúc. Nếu bạn thu hẹp phạm vi của tất cả các biến của mình theo hệ số hai, thì trung bình sẽ có một nửa số biến trong phạm vi bất kỳ lúc nào.
+Nhiều ngôn ngữ lập trình cung cấp nhiều phạm vi / cấp độ truy cập, bao gồm phạm vi mô-đun, lớp, chức năng và khối. Sử dụng quyền truy cập hạn chế thường tốt hơn vì nó có nghĩa là biến chỉ có thể được “nhìn thấy” bởi ít dòng mã hơn.
+Tại sao lại làm điều này? Bởi vì nó làm giảm một cách hiệu quả số lượng các biến mà người đọc phải nghĩ đến cùng một lúc. Nếu bạn thu hẹp phạm vi của tất cả các biến của mình theo hệ số hai, thì trung bình sẽ có một nửa số biến trong phạm vi bất kỳ lúc nào.
 Ví dụ: giả sử bạn có một lớp rất lớn, với một biến thành viên chỉ được sử dụng bởi hai phương thức, theo cách sau:
 ```python
   class LargeClass {
@@ -120,8 +121,8 @@ Ví dụ: giả sử bạn có một lớp rất lớn, với một biến thàn
     // Rất nhiều phương thức khác không sử dụng str_ …
   };
 ```
-Theo một nghĩa nào đó, một biến thành viên của lớp giống như một "mini-global" bên trong phạm vi của lớp. Đặc biệt, đối với các lớp lớn, thật khó để theo dõi tất cả các biến thành viên và phương thức nào sửa đổi từng biến. Càng ít "mini-global" càng tốt.
-Đối với trường hợp này, có thể hợp lý khi “hạ cấp” str_ thành một biến cục bộ:
+Theo một nghĩa nào đó, một biến thành viên của lớp giống như một "mini-global" bên trong phạm vi của lớp. Đặc biệt, đối với các lớp lớn, thật khó để theo dõi tất cả các biến thành viên và phương thức nào đó đã sửa đổi từng biến. Càng ít "mini-global" càng tốt.
+Đối với trường hợp này, có thể hợp lý khi “hạ cấp” `str_` thành một biến cục bộ:
 ```python
   class LargeClass {
     void Method1() {
@@ -135,11 +136,12 @@ Theo một nghĩa nào đó, một biến thành viên của lớp giống như 
   };
 ```
 Một cách khác để hạn chế quyền truy cập vào các thành viên trong lớp là đặt càng nhiều phương thức tĩnh càng tốt. Các phương thức tĩnh là một cách tuyệt vời để cho người đọc biết “các dòng mã này được tách biệt khỏi các biến đó”.
-Hoặc một cách tiếp cận khác là chia lớp lớn thành các lớp nhỏ hơn. Cách tiếp cận này chỉ hữu ích nếu các lớp nhỏ hơn trên thực tế bị cô lập với nhau. Nếu bạn tạo hai lớp học để truy cập vào các thành viên của nhau, bạn đã không thực sự hoàn thành được bất cứ điều gì.
+Hoặc một cách tiếp cận khác là chia lớp lớn thành các lớp nhỏ hơn. Cách tiếp cận này chỉ hữu ích nếu các lớp nhỏ hơn trên thực tế bị cô lập với nhau. Nếu bạn tạo ra hai lớp có thể truy cập vào các thành viên của nhau, bạn đã không thực sự hoàn thành được bất cứ điều gì.
 Điều tương tự cũng xảy ra đối với việc chia nhỏ các tệp lớn thành các tệp nhỏ hơn hoặc các chức năng lớn thành các chức năng nhỏ hơn. Động lực lớn để làm như vậy là tách biệt dữ liệu (tức là các biến).
-Nhưng các ngôn ngữ khác nhau có các quy tắc khác nhau về những gì chính xác tạo nên một phạm vi. Chúng tôi chỉ muốn chỉ ra một số quy tắc thú vị hơn liên quan đến phạm vi của các biến.
-## if Statement Scope trong C ++
-Giả sử bạn có mã C ++ sau:
+Nhưng các ngôn ngữ khác nhau có các quy tắc khác nhau về những gì chính xác tạo nên một phạm vi. Chúng tôi chỉ muốn chỉ ra một số quy tắc thú vị liên quan đến phạm vi của các biến.
+## Phạm vi mệnh đề if trong C ++
+
+Giả sử bạn có mã C++ sau:
 ```c++
   PaymentInfo* info = database.ReadPaymentInfo();
   if (info) {
@@ -148,7 +150,7 @@ Giả sử bạn có mã C ++ sau:
   // Nhiều dòng mã khác bên dưới...
 ```
 Thông tin biến sẽ vẫn nằm trong phạm vi cho phần còn lại của hàm, vì vậy người đọc mã này có thể ghi nhớ thông tin, tự hỏi nếu / làm thế nào nó sẽ được sử dụng lại.
-Nhưng trong trường hợp này, thông tin chỉ được sử dụng bên trong câu lệnh if. Trong C ++, chúng ta thực sự có thể xác định thông tin trong biểu thức điều kiện:
+Nhưng trong trường hợp này, thông tin chỉ được sử dụng bên trong câu lệnh if. Trong C++, chúng ta thực sự có thể xác định thông tin trong biểu thức điều kiện:
 ```c++
   if (PaymentInfo* info = database.ReadPaymentInfo()) {
     cout << "User paid: " << info->amount() << endl;
@@ -169,8 +171,8 @@ Giả sử bạn có một biến cố định chỉ được sử dụng bởi 
     submitted = true;
   };
 ```
-Các biến toàn cục như đã gửi có thể khiến người đọc mã này rất khó chịu. Có vẻ như submit_form() là hàm duy nhất sử dụng submit, nhưng bạn không thể biết chắc. Trên thực tế, một tệp JavaScript khác cũng có thể đang sử dụng một biến toàn cục có tên được gửi cho một mục đích khác!
-Bạn có thể ngăn chặn sự cố này bằng cách gói được gửi bên trong một lần đóng:
+Các biến toàn cục như đã gửi có thể khiến người đọc mã rất khó chịu. Có vẻ như submit_form() là hàm duy nhất sử dụng submit, nhưng bạn không thể biết chắc. Trên thực tế, một tệp JavaScript khác cũng có thể đang sử dụng một biến toàn cục có tên được gửi cho một mục đích khác!
+Bạn có thể ngăn chặn sự cố này bằng cách gói `submitted` bên trong một lần đóng:
 ```Javascript
   var submit_form = (function () {
     var submitted = false; // Chú ý: chỉ có thể được truy cập bởi hàm bên dưới
@@ -184,9 +186,10 @@ Bạn có thể ngăn chặn sự cố này bằng cách gói được gửi bê
   }());
 ```
 Lưu ý dấu ngoặc đơn ở dòng cuối cùng — hàm bên ngoài ẩn danh được thực thi ngay lập tức, trả về hàm bên trong.
-Nếu bạn chưa từng thấy kỹ thuật này trước đây, thoạt nhìn có thể rất lạ. Nó có tác dụng tạo một phạm vi "riêng tư" mà chỉ hàm bên trong mới có thể truy cập. Giờ đây, người đọc không phải tự hỏi Nơi nào khác đã gửi được sử dụng? hoặc lo lắng về xung đột với các quả cầu khác cùng tên. (Xem JavaScript: The Good Parts của Douglas Crockford [O’Reilly, 2008] để biết thêm các kỹ thuật như thế này.)
+Nếu bạn chưa từng thấy kỹ thuật này trước đây, thoạt nhìn có thể rất lạ. Nó có tác dụng tạo một phạm vi "riêng tư" mà chỉ hàm bên trong mới có thể truy cập. Giờ đây, người đọc không phải tự hỏi Nơi nào khác đã gửi được sử dụng? hoặc lo lắng về xung đột với các biến toàn cục khác cùng tên. (Xem JavaScript: The Good Parts của Douglas Crockford [O’Reilly, 2008] để biết thêm các kỹ thuật như thế này.)
 
 ## Phạm vi toàn cục của JavaScript
+
 Trong JavaScript, nếu bạn bỏ qua từ khóa var khỏi định nghĩa biến (ví dụ: x = 1 thay vì var x = 1), thì biến sẽ được đưa vào phạm vi toàn cục, nơi mọi tệp JavaScript và khối <script> đều có thể truy cập nó. Đây là một ví dụ:
 ```javascript
   <script>
